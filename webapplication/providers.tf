@@ -2,5 +2,5 @@
 # Azure Provider source and version being used
 # Configure the Microsoft Azure Provider
 provider "azurerm" {
-  feature {}
+  feature { }
 }
