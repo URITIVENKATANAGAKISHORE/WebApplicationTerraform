@@ -2,23 +2,30 @@ trigger: none
 pr: none
 
 pool:
-  vmImage: windows-latest
+  vmImage: ubuntu-latest
 
 stages:
 - stage: terraform_init
   displayName: Terraform Init
   jobs:
-  - job:
+  - job: terraform_init
     continueOnError: false
     steps:
-    - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
-      displayName: Install Terraform
+    - task: PublishBuildArtifacts@1
+      displayName: Publish Artifacts
+      inputs:
+        PathtoPublish: '$(System.DefaultworkingDirectory)/webapplication'
+        ArtifactName: 'webapplication'
+        publishLocation: 'Container'
+    - task: TerraformInstaller@0
+      displayName: Terraform Install
       inputs:
         terraformVersion: 'latest'
     - task: TerraformCLI@0
       displayName: Terraform init
       inputs:
         command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/webapplication'
         backendType: 'azurerm'
         backendServiceArm: 'TerraformAzureConnection'
         ensureBackend: true
@@ -29,73 +36,11 @@ stages:
         backendAzureRmContainerName: 'tfstate'
         backendAzureRmKey: 'dev-tfstate'
         allowTelemetryCollection: false
-        commandOptions: '-var-file="/env/dev/dev.tfvars"'
-
-- stage: terraform_validate
-  dependsOn: terraform_init
-  condition: succeeded('terraform_init')
-  displayName: Terraform Validate
-  jobs:
-  - job:
-    steps:
-    - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
-      displayName: Install Terraform
-      inputs:
-        terraformVersion: 'latest'
-    
     - task: TerraformCLI@0
-      displayName: Terraform init
-      inputs:
-        command: 'init'
-        backendType: 'azurerm'
-        backendServiceArm: 'TerraformAzureConnection'
-        ensureBackend: true
-        backendAzureRmResourceGroupName: 'infrastructure-rg'
-        backendAzureRmResourceGroupLocation: 'eastus'
-        backendAzureRmStorageAccountName: 'infraterraformstorage'
-        backendAzureRmStorageAccountSku: 'Standard_LRS'
-        backendAzureRmContainerName: 'tfstate'
-        backendAzureRmKey: 'dev-tfstate'
-        allowTelemetryCollection: false
-        commandOptions: '-var-file="/env/dev/dev.tfvars"'
-    
-    - task: TerraformCLI@0
-      displayName: Terraform validate
+      displayName: Terraform Validate
       inputs:
         command: 'validate'
-        environmentServiceName: 'TerraformAzureConnection'
         allowTelemetryCollection: false
-
-- stage: terraform_plan
-  dependsOn: terraform_validate
-  condition: succeeded('terraform_validate')
-  displayName: Terraform Plan
-  jobs:
-    - job:
-      steps:
-      - task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
-        displayName: Install Terraform
-        inputs:
-          terraformVersion: 'latest' 
-      - task: TerraformCLI@0
-        displayName: Terraform init
-        inputs:
-          command: 'init'
-          backendType: 'azurerm'
-          backendServiceArm: 'TerraformAzureConnection'
-          ensureBackend: true
-          backendAzureRmResourceGroupName: 'infrastructure-rg'
-          backendAzureRmResourceGroupLocation: 'eastus'
-          backendAzureRmStorageAccountName: 'infraterraformstorage'
-          backendAzureRmStorageAccountSku: 'Standard_LRS'
-          backendAzureRmContainerName: 'tfstate'
-          backendAzureRmKey: 'dev-tfstate'
-          allowTelemetryCollection: false
-          commandOptions: '-var-file="/env/dev/dev.tfvars"'
-      - task: TerraformCLI@0
-        displayName: Terraform plan
-        inputs:
-          command: 'plan'
-          allowTelemetryCollection: false
-          environmentServiceName: 'TerraformAzureConnection'
-          commandOptions: '-var-file="/env/dev/dev.tfvars"'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/webapplication'
+    
+    
