@@ -5,10 +5,10 @@ pool:
   vmImage: ubuntu-latest
 
 stages:
-- stage: terraform_init
-  displayName: Terraform Init
+- stage: DeployWebApplicationInfrastructure
+  displayName: Deploy WebApplication Infrastructure
   jobs:
-  - job: terraform_init
+  - job: DeployWebApplicationInfrastructure
     continueOnError: false
     steps:
     - task: PublishBuildArtifacts@1
