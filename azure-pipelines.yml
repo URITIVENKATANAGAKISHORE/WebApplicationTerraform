@@ -42,6 +42,23 @@ stages:
       displayName: Install Terraform
       inputs:
         terraformVersion: 'latest'
+    
+    - task: TerraformCLI@0
+      displayName: Terraform init
+      inputs:
+        command: 'init'
+        backendType: 'azurerm'
+        backendServiceArm: 'TerraformAzureConnection'
+        ensureBackend: true
+        backendAzureRmResourceGroupName: 'infrastructure-rg'
+        backendAzureRmResourceGroupLocation: 'eastus'
+        backendAzureRmStorageAccountName: 'infraterraformstorage'
+        backendAzureRmStorageAccountSku: 'Standard_LRS'
+        backendAzureRmContainerName: 'tfstate'
+        backendAzureRmKey: 'dev-tfstate'
+        allowTelemetryCollection: false
+        commandOptions: '-var-file="/env/dev/dev.tfvars"'
+    
     - task: TerraformCLI@0
       displayName: Terraform validate
       inputs:
