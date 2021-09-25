@@ -43,4 +43,12 @@ stages:
         allowTelemetryCollection: false
         workingDirectory: '$(System.DefaultWorkingDirectory)/webapplication'
     
-    
+    - task: TerraformCLI@0
+      inputs:
+        command: 'plan'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/webapplication'
+        environmentServiceName: 'TerraformAzureConnection'
+        runAzLogin: true
+        commandOptions: '-var-file="/env/dev/dev.tfvars"'
+        allowTelemetryCollection: false
+        publishPlanResults: 'dev_publish_plan'
