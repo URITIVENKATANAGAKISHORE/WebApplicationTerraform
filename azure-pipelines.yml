@@ -44,9 +44,10 @@ stages:
         workingDirectory: '$(System.DefaultWorkingDirectory)/webapplication'
     
     - task: TerraformCLI@0
+      displayName: Terraform Plan
       inputs:
-        command: 'plan'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/webapplication'
         environmentServiceName: 'TerraformAzureConnection'
         runAzLogin: true
-        commandOptions: '-var-file="/webapplication/env/dev/dev.tfvars"'
+        commandOptions: '-var-file="/webapplication/env/dev/dev.tfvars"  -out dev_terraform.plan'
         allowTelemetryCollection: false
