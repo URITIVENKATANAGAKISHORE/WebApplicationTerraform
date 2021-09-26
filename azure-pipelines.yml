@@ -49,5 +49,5 @@ stages:
         workingDirectory: '$(pipeline.Workspace)/webapplication/'
         environmentServiceName: 'TerraformAzureConnection'
         runAzLogin: true
-        commandOptions: '-var-file="$(pipeline.Workspace)/webapplication/env/dev/dev.tfvars" -var -out $(pipeline.Workspace)/webapplicatio-out/dev_publish_plan-$(Build.BuildId).out'
+        commandOptions: '-var-file="$(System.DefaultWorkingDirectory)/webapplication/env/dev/dev.tfvars" -var -out $(pipeline.Workspace)/webapplicatio-out/dev_publish_plan-$(Build.BuildId).out'
         allowTelemetryCollection: false
